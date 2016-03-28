@@ -9,22 +9,24 @@ This is a sample asp.net core Web Api project running inside a Docker container.
 
 ## How to run ? 
 
-1.  Build your base image
+- Build the base image
 
 ```
 docker build -t mersocarlin/aspnet .
 ```
 
-2. Install the project dependencies
+- Install project dependencies
 
 ```
 docker-compose run --rm --service-ports api dnu restore
 ```
 
-3. Run the project
+- Run project
 
 ```
 docker-compose up
 ```
 
-4. Access your browser at `http://[host_machine_ip]:5000`
+- Access your browser at `http://[host_machine_ip]:5000/api/bank`
+- Seed the data base `sh ./database/seed.sh`
+- Access your browser again at `http://[host_machine_ip]:5000/api/bank`
