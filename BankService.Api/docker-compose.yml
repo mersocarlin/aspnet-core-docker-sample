@@ -1,8 +1,0 @@
-api:
-  image: mersocarlin/aspnet
-  command: dnx web
-  volumes:
-    - .:/app
-  ports:
-    - "5000:5000"
-    
