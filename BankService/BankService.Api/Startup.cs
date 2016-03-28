@@ -1,11 +1,12 @@
-﻿using BankService.Data.Repositories;
-using BankService.Data.Setup;
+﻿using BankService.Data.Contexts;
+using BankService.Data.Repositories;
 using BankService.Domain.Contracts;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace BankService.Api
 {
@@ -15,8 +16,7 @@ namespace BankService.Api
         {
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .AddJsonFile("config.json");
+                .AddJsonFile("appsettings.json");
                 
 
             if (env.IsEnvironment("Development"))
@@ -39,9 +39,17 @@ namespace BankService.Api
             //services.AddApplicationInsightsTelemetry(Configuration);
 
             services.AddMvc();
-            services.Configure<Settings>(Configuration);
 
+            #region Setup DI
+            var mongoDBContext = new MongoDBContext(
+                Environment.GetEnvironmentVariable("DB_SERVER"),
+                Environment.GetEnvironmentVariable("DB_PORT"),
+                Environment.GetEnvironmentVariable("DB_DATABASE")
+            );
+
+            services.AddInstance<IMongoDBContext>(mongoDBContext);
             services.AddSingleton<IAccountHolderRepository, AccountHolderRepository>();
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
