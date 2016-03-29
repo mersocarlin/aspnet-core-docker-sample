@@ -5,7 +5,7 @@
   },
 
   "dependencies": {
-    "BankService.Data": "1.0.3-*",
+    "BankService.Data": "1.0.4-*",
     "BankService.Domain": "1.0.2-*",
     "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1-final",
     "Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
