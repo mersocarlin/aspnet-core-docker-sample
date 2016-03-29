@@ -5,8 +5,8 @@
   },
 
   "dependencies": {
-    "BankService.Data": "1.0.0-*",
-    "BankService.Domain": "1.0.0-*",
+    "BankService.Data": "1.0.1-*",
+    "BankService.Domain": "1.0.1-*",
     "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1-final",
     "Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
     "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
@@ -15,8 +15,7 @@
     "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
     "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
     "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
-    "mongocsharpdriver": "2.2.3"
+    "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final"
   },
 
   "commands": {

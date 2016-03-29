@@ -1,7 +1,6 @@
 ﻿using BankService.Domain.Contracts;
 using BankService.Domain.Models;
 using Microsoft.AspNet.Mvc;
-using MongoDB.Bson;
 using System.Collections.Generic;
 
 namespace BankService.Api.Controllers
@@ -19,13 +18,13 @@ namespace BankService.Api.Controllers
         [HttpGet]
         public IEnumerable<AccountHolder> Get()
         {
-            return this.repository.GetAll();
+            return this.repository.GetWithLimit(100);
         }
 
         [HttpGet("{id}")]
         public AccountHolder Get(string id)
         {
-            return this.repository.GetById(new ObjectId(id));
+            return this.repository.GetById(id);
         }
     }
 }
