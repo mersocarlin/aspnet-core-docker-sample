@@ -28,5 +28,5 @@ docker-compose up
 ```
 
 - Access your browser at `http://[host_machine_ip]:5000/api/bank`
-- Seed the data base `sh ./database/seed.sh`
+- Seed the data base `sh ./databases/seed.sh`
 - Access your browser again at `http://[host_machine_ip]:5000/api/bank`
