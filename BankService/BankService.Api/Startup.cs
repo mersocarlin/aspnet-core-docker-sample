@@ -43,13 +43,14 @@ namespace BankService.Api
             #region Setup DI
             var mongoDBContext = new MongoDBContext(
                 Environment.GetEnvironmentVariable("MONGODB_SERVER"),
-                Environment.GetEnvironmentVariable("MONGODB_PORT"),
+                Convert.ToInt32(Environment.GetEnvironmentVariable("MONGODB_PORT")),
                 Environment.GetEnvironmentVariable("MONGODB_DATABASE")
             );
 
             var redisContext = new RedisContext(
                 Environment.GetEnvironmentVariable("REDIS_SERVER"),
-                Environment.GetEnvironmentVariable("REDIS_PORT")
+                Convert.ToInt32(Environment.GetEnvironmentVariable("REDIS_PORT")),
+                Convert.ToInt32(Environment.GetEnvironmentVariable("REDIS_KEY_TIMEOUT"))
             );
 
             services.AddInstance<IMongoDBContext>(mongoDBContext);

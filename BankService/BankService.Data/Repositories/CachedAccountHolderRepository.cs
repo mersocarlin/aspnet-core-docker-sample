@@ -45,7 +45,6 @@ namespace BankService.Data.Repositories
                 return null;
             }
 
-
             var accountHolder = new AccountHolder(
                 id: new ObjectId(id),
                 firstName: this.GetEntryValue("first_name", entries),
@@ -95,6 +94,10 @@ namespace BankService.Data.Repositories
                 }
             );
 
+            var timeoutSpan = new TimeSpan(0, 0, this.redisContext.KeyTimeout);
+
+            this.database.KeyExpire(accountHolderHashKey, timeoutSpan);
+
             accountHolder.Accounts
                 .ToList()
                 .ForEach((account) =>
@@ -106,11 +109,13 @@ namespace BankService.Data.Repositories
                         accountHashKey,
                         new HashEntry[]
                         {
-                        new HashEntry("account_type", account.Type),
-                        new HashEntry("account_balance", account.Balance),
-                        new HashEntry("currency", account.Currency)
+                            new HashEntry("account_type", account.Type),
+                            new HashEntry("account_balance", account.Balance),
+                            new HashEntry("currency", account.Currency)
                         }
                     );
+
+                    this.database.KeyExpire(accountHashKey, timeoutSpan);
                 });
         }
     }
