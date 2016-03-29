@@ -9,6 +9,13 @@ namespace BankService.Domain.Models
 
         }
 
+        public Account(string type, double balance, string currency)
+        {
+            this.Type = type;
+            this.Balance = balance;
+            this.Currency = currency;
+        }
+
         [BsonElement("account_type")]
         public string Type { get; set; }
 
