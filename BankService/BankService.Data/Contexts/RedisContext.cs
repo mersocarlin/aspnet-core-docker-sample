@@ -20,7 +20,8 @@ namespace BankService.Data.Contexts
 
         public IDatabase GetDatabase()
         {
-            ConnectionMultiplexer redis = ConnectionMultiplexer.Connect($"{this.Server}:{this.Port}");
+            ConnectionMultiplexer redis = ConnectionMultiplexer
+                .Connect($"{this.Server}:{this.Port},abortConnect=false");
             return redis.GetDatabase();
         }
     }
