@@ -13,10 +13,12 @@
       "launchBrowser": true,
       "launchUrl": "api/values",
       "environmentVariables": {
-        "DB_DATABASE": "bank",
-        "DB_PORT": "27017",
-        "DB_SERVER": "192.168.99.100",
-        "Hosting:Environment": "Development"
+        "Hosting:Environment": "Development",
+        "MONGODB_DATABASE": "bank",
+        "MONGODB_PORT": "27017",
+        "MONGODB_SERVER": "192.168.99.100",
+        "REDIS_SERVER": "192.168.99.100",
+        "REDIS_PORT": "6379"
       }
     },
     "web": {

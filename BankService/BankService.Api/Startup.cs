@@ -42,13 +42,20 @@ namespace BankService.Api
 
             #region Setup DI
             var mongoDBContext = new MongoDBContext(
-                Environment.GetEnvironmentVariable("DB_SERVER"),
-                Environment.GetEnvironmentVariable("DB_PORT"),
-                Environment.GetEnvironmentVariable("DB_DATABASE")
+                Environment.GetEnvironmentVariable("MONGODB_SERVER"),
+                Environment.GetEnvironmentVariable("MONGODB_PORT"),
+                Environment.GetEnvironmentVariable("MONGODB_DATABASE")
+            );
+
+            var redisContext = new RedisContext(
+                Environment.GetEnvironmentVariable("REDIS_SERVER"),
+                Environment.GetEnvironmentVariable("REDIS_PORT")
             );
 
             services.AddInstance<IMongoDBContext>(mongoDBContext);
+            services.AddInstance<IRedisContext>(redisContext);
             services.AddSingleton<IAccountHolderRepository, AccountHolderRepository>();
+            services.AddSingleton<ICachedAccountHolderRepository, CachedAccountHolderRepository>();
             #endregion
         }
 
