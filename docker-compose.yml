@@ -8,7 +8,7 @@ api:
   environment:
     DB_DATABASE: bank
     DB_PORT: 27017
-    DB_SERVER: 192.168.99.100
+    DB_SERVER: mongo
   links:
     - mongo
 
