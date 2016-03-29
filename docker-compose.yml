@@ -5,6 +5,10 @@ api:
     - ./BankService/BankService.Api:/app
   ports:
     - "5000:5000"
+  environment:
+    DB_DATABASE: bank
+    DB_PORT: 27017
+    DB_SERVER: 192.168.99.100
   links:
     - mongo
 
