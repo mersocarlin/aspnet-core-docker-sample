@@ -24,6 +24,8 @@ mongo:
     - mongo-aspnet-core-docker:/data/db
     
 redis:
-  image: redis
+  image: redis:alpine
   ports:
     - "6379:6379"
+  volumes:
+    - redis-aspnet-core-docker:/data  
