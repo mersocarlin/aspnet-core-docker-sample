@@ -11,7 +11,7 @@ api:
     MONGODB_SERVER: mongo
     REDIS_KEY_TIMEOUT: 30
     REDIS_PORT: 6379
-    REDIS_SERVER: 192.168.99.100
+    REDIS_SERVER: redis
   links:
     - mongo
     - redis
