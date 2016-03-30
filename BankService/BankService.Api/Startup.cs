@@ -3,6 +3,8 @@ using BankService.Data.Repositories;
 using BankService.Domain.Contracts;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
+using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Mvc.Cors;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -37,8 +39,11 @@ namespace BankService.Api
         {
             // Add framework services.
             //services.AddApplicationInsightsTelemetry(Configuration);
-
             services.AddMvc();
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(new CorsAuthorizationFilterFactory("MyPolicy"));
+            });
 
             #region Setup DI
             var mongoDBContext = new MongoDBContext(
@@ -73,6 +78,14 @@ namespace BankService.Api
             //app.UseApplicationInsightsExceptionTelemetry();
 
             app.UseStaticFiles();
+
+            app.UseCors(builder =>
+            {
+                builder
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowAnyOrigin();
+            });
 
             app.UseMvc();
         }
