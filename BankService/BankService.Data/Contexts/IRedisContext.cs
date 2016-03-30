@@ -1,4 +1,4 @@
-﻿using StackExchange.Redis;
+﻿using ServiceStack.Redis;
 
 namespace BankService.Data.Contexts
 {
@@ -8,6 +8,6 @@ namespace BankService.Data.Contexts
         int Port { get; set; }
         int KeyTimeout { get; set; }
 
-        IDatabase GetDatabase();
+        RedisClient GetClient();
     }
 }

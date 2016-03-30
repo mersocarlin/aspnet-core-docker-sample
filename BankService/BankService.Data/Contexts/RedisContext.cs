@@ -1,4 +1,4 @@
-﻿using StackExchange.Redis;
+﻿using ServiceStack.Redis;
 
 namespace BankService.Data.Contexts
 {
@@ -18,11 +18,10 @@ namespace BankService.Data.Contexts
         public int Port { get; set; }
         public int KeyTimeout { get; set; }
 
-        public IDatabase GetDatabase()
+        public RedisClient GetClient()
         {
-            ConnectionMultiplexer redis = ConnectionMultiplexer
-                .Connect($"{this.Server}:{this.Port},abortConnect=false");
-            return redis.GetDatabase();
+            var client = new RedisClient(this.Server, this.Port);
+            return client;
         }
     }
 }

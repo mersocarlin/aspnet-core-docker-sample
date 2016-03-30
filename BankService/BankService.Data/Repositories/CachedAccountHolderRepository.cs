@@ -2,8 +2,9 @@
 using BankService.Domain.Contracts;
 using BankService.Domain.Models;
 using MongoDB.Bson;
-using StackExchange.Redis;
+using ServiceStack.Redis;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace BankService.Data.Repositories
@@ -11,62 +12,47 @@ namespace BankService.Data.Repositories
     public class CachedAccountHolderRepository : ICachedAccountHolderRepository
     {
         private readonly IRedisContext redisContext;
-        private readonly IDatabase database;
+        private readonly RedisClient redisClient;
 
         public CachedAccountHolderRepository(IRedisContext redisContext)
         {
             this.redisContext = redisContext;
-            this.database = this.redisContext.GetDatabase();
-        }
-
-        private RedisValue GetEntryValue(string field, HashEntry[] entries)
-        {
-            var entry = entries
-                .AsEnumerable()
-                .Where(e => e.Name.Equals(field))
-                .FirstOrDefault();
-
-            if (entry != null)
-            {
-                return entry.Value;
-            }
-
-            return RedisValue.Null;
+            this.redisClient = this.redisContext.GetClient();
         }
 
         public AccountHolder Get(string id)
         {
             string accountHolderHashKey = $"account:{id}";
 
-            HashEntry[] entries = this.database.HashGetAll(accountHolderHashKey);
+            Dictionary<string, string> entries = this.redisClient.GetAllEntriesFromHash(accountHolderHashKey);
 
-            if (entries == null || entries.Length == 0)
+            if (entries == null || entries.Count == 0)
             {
                 return null;
             }
-
+            
             var accountHolder = new AccountHolder(
                 id: new ObjectId(id),
-                firstName: this.GetEntryValue("first_name", entries),
-                lastName: this.GetEntryValue("last_name", entries)
+                firstName: entries["first_name"],
+                lastName: entries["last_name"]
             );
 
-            var totalAccounts = Convert.ToInt32(this.GetEntryValue("accounts", entries));
+            var totalAccounts = Convert.ToInt32(entries["accounts"]);
             for (int i = 0; i < totalAccounts; i++)
             {
                 var accountHashKey = $"{accountHolderHashKey}:acc:{i}";
 
-                entries = this.database.HashGetAll(accountHashKey);
+                entries = this.redisClient.GetAllEntriesFromHash(accountHashKey);
 
-                if (entries == null || entries.Length == 0)
+                if (entries == null || entries.Count == 0)
                 {
                     continue;
                 }
 
                 var account = new Account(
-                    type: this.GetEntryValue("account_type", entries),
-                    balance: Convert.ToDouble(this.GetEntryValue("account_balance", entries)),
-                    currency: this.GetEntryValue("currency", entries)
+                    type: entries["account_type"],
+                    balance: Convert.ToDouble(entries["account_balance"]),
+                    currency: entries["currency"]
                 );
 
                 accountHolder.AddAccount(account);
@@ -82,21 +68,15 @@ namespace BankService.Data.Repositories
                 return;
             }
 
-            string accountHolderHashKey = $"account:{accountHolder.Id.ToString()}";
-
-            this.database.HashSet(
-                accountHolderHashKey,
-                new HashEntry[]
-                {
-                    new HashEntry("first_name", accountHolder.FirstName),
-                    new HashEntry("last_name", accountHolder.LastName),
-                    new HashEntry("accounts", accountHolder.Accounts.Count())
-                }
-            );
-
             var timeoutSpan = new TimeSpan(0, 0, this.redisContext.KeyTimeout);
 
-            this.database.KeyExpire(accountHolderHashKey, timeoutSpan);
+            string accountHolderHashKey = $"account:{accountHolder.Id.ToString()}";
+
+            this.redisClient.SetEntryInHash(accountHolderHashKey, "first_name", accountHolder.FirstName);
+            this.redisClient.SetEntryInHash(accountHolderHashKey, "last_name", accountHolder.LastName);
+            this.redisClient.SetEntryInHash(accountHolderHashKey, "accounts", accountHolder.Accounts.Count().ToString());
+
+            this.redisClient.ExpireEntryIn(accountHolderHashKey, timeoutSpan);
 
             accountHolder.Accounts
                 .ToList()
@@ -105,17 +85,11 @@ namespace BankService.Data.Repositories
                     var index = accountHolder.Accounts.ToList().IndexOf(account);
                     var accountHashKey = $"{accountHolderHashKey}:acc:{index}";
 
-                    this.database.HashSet(
-                        accountHashKey,
-                        new HashEntry[]
-                        {
-                            new HashEntry("account_type", account.Type),
-                            new HashEntry("account_balance", account.Balance),
-                            new HashEntry("currency", account.Currency)
-                        }
-                    );
+                    this.redisClient.SetEntryInHash(accountHashKey, "account_type", account.Type);
+                    this.redisClient.SetEntryInHash(accountHashKey, "account_balance", account.Balance.ToString());
+                    this.redisClient.SetEntryInHash(accountHashKey, "currency", account.Currency);
 
-                    this.database.KeyExpire(accountHashKey, timeoutSpan);
+                    this.redisClient.ExpireEntryIn(accountHashKey, timeoutSpan);
                 });
         }
     }
