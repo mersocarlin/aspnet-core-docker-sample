@@ -1,12 +1,10 @@
 ﻿using BankService.Domain.Contracts;
 using BankService.Domain.Models;
-using Microsoft.AspNet.Cors;
 using Microsoft.AspNet.Mvc;
 using System.Collections.Generic;
 
 namespace BankService.Api.Controllers
 {
-    [EnableCors("MyPolicy")]
     [Route("api/accountHolders")]
     public class AccountHolderController : Controller
     {
