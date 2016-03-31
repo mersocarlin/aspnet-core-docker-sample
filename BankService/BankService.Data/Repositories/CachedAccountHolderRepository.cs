@@ -92,5 +92,27 @@ namespace BankService.Data.Repositories
                     this.redisClient.ExpireEntryIn(accountHashKey, timeoutSpan);
                 });
         }
+
+        public void Remove(AccountHolder accountHolder)
+        {
+            if (accountHolder == null)
+            {
+                return;
+            }
+
+            string accountHolderHashKey = $"account:{accountHolder.Id.ToString()}";
+
+            this.redisClient.Remove(accountHolderHashKey);
+
+            accountHolder.Accounts
+                .ToList()
+                .ForEach((account) =>
+                {
+                    var index = accountHolder.Accounts.ToList().IndexOf(account);
+                    var accountHashKey = $"{accountHolderHashKey}:acc:{index}";
+
+                    this.redisClient.Remove(accountHashKey);
+                });
+        }
     }
 }
