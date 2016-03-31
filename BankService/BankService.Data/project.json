@@ -1,5 +1,5 @@
 ﻿{
-  "version": "1.0.6-*",
+  "version": "1.0.7-*",
   "description": "BankService.Data Class Library",
   "authors": [ "Hemerson" ],
   "tags": [ "" ],
@@ -10,7 +10,7 @@
     "dnx451": { }
   },
   "dependencies": {
-    "BankService.Domain": "1.0.2-*",
+    "BankService.Domain": "1.0.3-*",
     "Microsoft.CSharp": "4.0.1-beta-23516",
     "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
     "Microsoft.Extensions.OptionsModel": "1.0.0-rc1-final",

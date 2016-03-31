@@ -6,5 +6,6 @@ namespace BankService.Domain.Contracts
     {
         AccountHolder Get(string id);
         void Set(AccountHolder accountHolder);
+        void Remove(AccountHolder accountHolder);
     }
 }
