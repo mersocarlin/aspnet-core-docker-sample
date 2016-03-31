@@ -5,9 +5,12 @@ using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Cors;
+using Microsoft.AspNet.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 
 namespace BankService.Api
@@ -39,11 +42,39 @@ namespace BankService.Api
         {
             // Add framework services.
             //services.AddApplicationInsightsTelemetry(Configuration);
-            services.AddMvc();
-            services.Configure<MvcOptions>(options =>
-            {
-                options.Filters.Add(new CorsAuthorizationFilterFactory("MyPolicy"));
+
+            #region JsonOutputFormatter
+            services.AddMvc(options => {
+                var formatter = new JsonOutputFormatter();
+                formatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                formatter.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Ignore;
+                formatter.SerializerSettings.Formatting = Formatting.Indented;
+
+                options.OutputFormatters.Clear();
+                options.OutputFormatters.Insert(0, formatter);
             });
+            #endregion
+
+            #region CORS
+            services.AddCors();
+            //services.AddCors(options =>
+            //{
+            //    options.AddPolicy(
+            //        "AllowSpecific",
+            //        p => p.WithOrigins("www.yourdomain.com")
+            //    );
+            //});
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    "AllowAll", 
+                    p => p
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                );
+            });
+            #endregion
 
             #region Setup DI
             var mongoDBContext = new MongoDBContext(
@@ -68,6 +99,19 @@ namespace BankService.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            #region CORS
+            app.UseCors("AllowAll");
+
+            //if (env.IsProduction())
+            //{
+            //    app.UseCors("AllowSpecific");
+            //}
+            //else if (env.IsDevelopment())
+            //{
+            //    app.UseCors("AllowAll");
+            //}
+            #endregion
+
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
@@ -78,14 +122,6 @@ namespace BankService.Api
             //app.UseApplicationInsightsExceptionTelemetry();
 
             app.UseStaticFiles();
-
-            app.UseCors(builder =>
-            {
-                builder
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowAnyOrigin();
-            });
 
             app.UseMvc();
         }
