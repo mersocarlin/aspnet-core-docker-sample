@@ -34,6 +34,6 @@ docker-compose run --rm --service-ports api dnu restore
 docker-compose up
 ```
 
-- Access your browser at `http://[host_machine_ip]:5000/api/bank`
+- Access your browser at `http://[host_machine_ip]:5000/api/accountHolders`
 - Seed the data base `sh ./databases/seed.sh`
-- Access your browser again at `http://[host_machine_ip]:5000/api/bank`
+- Access your browser again at `http://[host_machine_ip]:5000/api/accountHolders`
